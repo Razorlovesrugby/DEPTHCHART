@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Belize Rugby — Performance Depth Chart 2025–26</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      height: 100vh; display: flex; flex-direction: column;
+      background: #0a0a0f; font-family: 'Barlow Condensed', sans-serif;
+      color: #e2e8f0; overflow: hidden; user-select: none;
+    }
+    button { font-family: 'Barlow Condensed', sans-serif; }
+
+```
+#header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-bottom: 1px solid #1e293b;
+  padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+}
+#header-icon { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: background 0.3s; flex-shrink: 0; }
+#header-title { font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+#header-sub { font-size: 11px; color: #64748b; letter-spacing: 1px; margin-top: 1px; }
+
+#layout { display: flex; flex: 1; overflow: hidden; }
+
+#sidebar {
+  width: 192px; background: #0d0d14; border-right: 1px solid #1e293b;
+  padding: 10px 6px; display: flex; flex-direction: column; gap: 3px;
+  overflow-y: auto; flex-shrink: 0;
+}
+#sidebar-label { font-size: 10px; letter-spacing: 2px; color: #475569; padding: 0 8px 8px; text-transform: uppercase; }
+
+.pos-btn {
+  border-radius: 6px; padding: 9px 10px; cursor: grab;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  border: 1px solid transparent; border-left: 3px solid transparent;
+  background: transparent; color: #64748b; transition: opacity 0.1s;
+}
+.pos-btn.ghost { opacity: 0.3; }
+.pos-btn.drop-hi { border-top: 2px solid #64748b; }
+.pos-btn.drop-lo { border-bottom: 2px solid #64748b; }
+
+#main { flex: 1; padding: 20px 26px; overflow-y: auto; background: #0a0a0f; }
+#pos-header { margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+#pos-abbr { color: #fff; font-weight: 900; font-size: 12px; letter-spacing: 2px; padding: 3px 12px; border-radius: 4px; text-transform: uppercase; }
+#pos-name { font-size: 26px; font-weight: 900; letter-spacing: 1px; color: #f1f5f9; }
+#pos-divider { flex: 1; height: 1px; }
+#pos-count { font-size: 11px; color: #475569; letter-spacing: 1px; }
+
+#legend { display: flex; gap: 16px; margin-bottom: 12px; }
+.leg { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; gap: 5px; }
+.leg-dot { width: 7px; height: 7px; border-radius: 50%; }
+.leg-desc { color: #334155; font-weight: 400; }
+
+.sec-div { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.sec-div-lbl { font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.sec-div-line { flex: 1; height: 1px; }
+
+#player-list { display: flex; flex-direction: column; gap: 5px; }
+
+.pcard {
+  border-radius: 8px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: grab; transition: box-shadow 0.1s;
+  border-left-width: 3px; border-left-style: solid;
+}
+.pcard:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.35); }
+.pcard.ghost { opacity: 0.25; }
+.pcard.drop-hi { border-top: 2px solid #94a3b8 !important; }
+.pcard.drop-lo { border-bottom: 2px solid #94a3b8 !important; }
+
+.prank { width: 30px; height: 30px; border-radius: 6px; flex-shrink: 0; font-weight: 900; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.pname { flex: 1; font-weight: 600; letter-spacing: 0.4px; }
+.ptier { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; opacity: 0.85; }
+.pbtn {
+  background: transparent; border: 1px solid #1e293b; border-radius: 5px;
+  padding: 3px 8px; color: #475569; font-size: 11px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.5px; transition: all 0.15s;
+}
+.phandle { color: #475569; font-size: 18px; padding: 0 2px; }
+
+#drag-clone {
+  position: fixed; pointer-events: none; z-index: 9999;
+  display: none; align-items: center; gap: 12px;
+  border-radius: 8px; padding: 10px 14px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  transform: rotate(1.5deg) scale(1.02);
+  font-family: 'Barlow Condensed', sans-serif; color: #e2e8f0;
+  border-left-width: 3px; border-left-style: solid;
+  transition: none;
+}
+
+#tip-box { margin-top: 18px; padding: 10px 14px; background: #0d0d14; border-radius: 8px; border: 1px solid #1e293b; font-size: 12px; color: #475569; }
+
+#modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); align-items: center; justify-content: center; z-index: 100; }
+#modal-overlay.open { display: flex; }
+#modal { background: #0f0f1a; border: 1px solid #1e293b; border-radius: 12px; padding: 26px 28px; min-width: 300px; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
+#modal-eyebrow { font-size: 10px; color: #475569; letter-spacing: 2px; margin-bottom: 5px; }
+#modal-name { font-size: 22px; font-weight: 900; color: #f1f5f9; margin-bottom: 3px; }
+#modal-current { font-size: 12px; color: #64748b; margin-bottom: 18px; }
+#modal-positions { display: flex; flex-direction: column; gap: 5px; }
+.mpos-btn { background: #131320; border-radius: 7px; padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; color: #cbd5e1; transition: all 0.15s; border-left-width: 3px; border-left-style: solid; border-top: 1px solid; border-right: 1px solid; border-bottom: 1px solid; }
+#modal-cancel { margin-top: 14px; width: 100%; background: transparent; border: 1px solid #1e293b; border-radius: 7px; padding: 8px; color: #475569; cursor: pointer; font-size: 13px; font-weight: 600; }
+#modal-cancel:hover { color: #94a3b8; }
+```
+
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <div id="header-icon">🏉</div>
+  <div>
+    <div id="header-title">Belize Rugby — Performance Depth Chart</div>
+    <div id="header-sub">2025–26 Season · Click &amp; drag to reorder players · Drag sidebar rows to reorganise positions · ⇄ POS to reassign</div>
+  </div>
+</div>
+
+<div id="layout">
+  <div id="sidebar"><div id="sidebar-label">⠿ Drag to reorder</div></div>
+  <div id="main">
+    <div id="pos-header">
+      <div id="pos-abbr"></div>
+      <div id="pos-name"></div>
+      <div id="pos-divider"></div>
+      <div id="pos-count"></div>
+    </div>
+    <div id="legend">
+      <div class="leg" id="leg-s"><div class="leg-dot" id="leg-dot-s"></div>STARTER<span class="leg-desc" id="leg-desc-s"></span></div>
+      <div class="leg" style="color:#94a3b8"><div class="leg-dot" style="background:#94a3b8"></div>BACKUP<span class="leg-desc">· Next 3</span></div>
+      <div class="leg" style="color:#475569"><div class="leg-dot" style="background:#475569"></div>DEV<span class="leg-desc">· Rest</span></div>
+    </div>
+    <div id="player-list"></div>
+    <div id="tip-box">💡 <strong style="color:#64748b">Click and drag</strong> player cards up/down to reorder · Drag position rows in the sidebar to reorganise · Click <strong style="color:#64748b">⇄ POS</strong> to move a player to a different position</div>
+  </div>
+</div>
+
+<div id="drag-clone"></div>
+
+<div id="modal-overlay">
+  <div id="modal" onclick="event.stopPropagation()">
+    <div id="modal-eyebrow">MOVE PLAYER</div>
+    <div id="modal-name"></div>
+    <div id="modal-current"></div>
+    <div id="modal-positions"></div>
+    <button id="modal-cancel" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+const INIT = {
+  "Prop":       ["Driss Djerf","Dan Hughes","Sam Roberts","Ollie Davidson","Chris Jenkins","Isaac Ajala","Ciaran Smith","Josh Orr","Geroge Tarling","Matt G","Kyle Bosselmann"],
+  "Hooker":     ["Oli Evans","Jimmy Strainge","Ben Solomon","Case Scott","Alex Dolby","Tom Lindsay"],
+  "Second Row": ["Thomas Lewis","Quaid Martin","Nico Caplin","Ali Taha","George Bayless","Ollie Tait","Cameron Cowley","Harry Webb","John Harrison","Oliver Fides","Eoin Vaughan","Simon Dowling"],
+  "Back Row":   ["Marcus Atkinson","Gregor Findlay","Sam Huth","Liam Wann","Max Bender","Benedict Pubell-Mullick","Isaac S","Theo Roberts","James R","Morgan Douglas","Ollie Daniels","Trevor Hegleson","Joel Vides","Finn Selman","Will Carver","Casey O'Leary","Chris Dawkins","Reece","Geroge Lehmann","Tom Forrest","Ollie Cairns","Will Hurley","Elliott Eade","Oscar Roberts","Callum O'Reily","Lloyd","Ben Stringer"],
+  "Nine":       ["Charlie Gowling","William Maslen","Tim Price","Mac Mayerhofler"],
+  "Fly Half":   ["Ben Whinney","Frazer A","Gus Ashton","Finn Gilbertson","Will Stride","Rich West","Fabian Simpson","Sam Beaumont","Jono"],
+  "Centre":     ["Ben Stanton","Ben Wilder","Hugh Nicholson","Andy Cronin","Cameron Laurenson","Luis Quin","Jake Ryan","Liam Bryant","Antoine De Sagazan","Fred Roberts","Freddie Bender","Nicolas Guillaud","Charlie Champs","Alastair Hughes","Adam Anzani","Francesco","Alex McCallum","Ali Davidson","Harrison Baker","Nelson Tobin","Alan Avery","Efan Morris","Anatole Juliiard","Chataing Antoine"],
+  "Wing":       ["Adam Kroon","Tom Church","Thomas Bulfin","Leon Morgan","Ollie Lee","Callum Traynor","Maso","George Davis","Tristan","Tom Darwin","Noah MacKay-Pritchard","River West-Gomilla","Chris Brace","Fin Duigin","Alex Godley","Jason Harris","JC Sol"],
+  "Fullback":   ["Archie Morris","Mike Laverge"],
+};
+const SC = {"Prop":2,"Hooker":1,"Second Row":2,"Back Row":3,"Nine":1,"Fly Half":1,"Centre":2,"Wing":2,"Fullback":1};
+const C = {
+  "Prop":       {bg:"#1a2a1a",ac:"#4ade80",ba:"#166534"},
+  "Hooker":     {bg:"#1a1a2e",ac:"#818cf8",ba:"#3730a3"},
+  "Second Row": {bg:"#2a1a1a",ac:"#f87171",ba:"#991b1b"},
+  "Back Row":   {bg:"#1a2226",ac:"#38bdf8",ba:"#0c4a6e"},
+  "Nine":       {bg:"#251a2a",ac:"#c084fc",ba:"#6b21a8"},
+  "Fly Half":   {bg:"#2a2210",ac:"#fbbf24",ba:"#92400e"},
+  "Centre":     {bg:"#1a2520",ac:"#34d399",ba:"#065f46"},
+  "Wing":       {bg:"#2a1a20",ac:"#fb7185",ba:"#9f1239"},
+  "Fullback":   {bg:"#1e1e2a",ac:"#a78bfa",ba:"#4c1d95"},
+};
+const AB = {"Prop":"PR","Hooker":"HK","Second Row":"SR","Back Row":"BR","Nine":"9","Fly Half":"FH","Centre":"CTR","Wing":"WG","Fullback":"FB"};
+
+let pos = JSON.parse(JSON.stringify(INIT));
+let order = Object.keys(INIT);
+let active = order[0];
+
+// drag state
+let ds = null; // { type, fromIdx, toIdx, el, ox, oy, live }
+
+function tier(p, i) { const s=SC[p]||1; return i<s?"STARTER":i<s+3?"BACKUP":"DEV"; }
+function tc(p, i) { const t=tier(p,i); return t==="STARTER"?C[p].ac:t==="BACKUP"?"#94a3b8":"#475569"; }
+
+// ── Render ────────────────────────────────────────────────────
+function render() { renderSB(); renderMain(); }
+
+function renderSB() {
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = '<div id="sidebar-label">⠿ Drag to reorder</div>';
+  order.forEach((p, i) => {
+    const c = C[p], act = p === active;
+    const el = document.createElement('div');
+    el.className = 'pos-btn'; el.dataset.i = i;
+    if (act) el.style.cssText = `background:${c.bg};border:1px solid ${c.ac}33;border-left:3px solid ${c.ac};color:${c.ac}`;
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:7px"><span style="color:#334155;font-size:13px">⠿</span><span style="font-size:13px;font-weight:${act?700:500}">${p}</span></div><div style="display:flex;align-items:center;gap:5px"><span style="font-size:9px;font-weight:700;color:${c.ac};opacity:0.6">${SC[p]}S</span><span style="font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;${act?`background:${c.ba};color:#fff`:'background:#1e293b;color:#475569'}">${pos[p].length}</span></div>`;
+    el.addEventListener('click', e => { if(ds&&ds.live) return; active=p; render(); });
+    el.addEventListener('mousedown', e => { if(e.button!==0) return; e.preventDefault(); startDrag(e,'sb',i,el); });
+    sb.appendChild(el);
+  });
+}
+
+function renderMain() {
+  const c = C[active], players = pos[active], sc = SC[active]||1;
+  document.getElementById('header-icon').style.background = c.ac;
+  const ab = document.getElementById('pos-abbr'); ab.textContent = AB[active]; ab.style.background = c.ba;
+  document.getElementById('pos-name').textContent = active;
+  document.getElementById('pos-divider').style.background = `linear-gradient(to right,${c.ac}33,transparent)`;
+  document.getElementById('pos-count').textContent = `${players.length} PLAYERS · ${sc} STARTER${sc>1?'S':''}`;
+  document.getElementById('leg-s').style.color = c.ac;
+  document.getElementById('leg-dot-s').style.background = c.ac;
+  document.getElementById('leg-desc-s').textContent = `· Top ${sc}`;
+
+  const list = document.getElementById('player-list');
+  list.innerHTML = '';
+
+  players.forEach((name, i) => {
+    const t = tier(active, i), tcolor = tc(active, i);
+    const isSt = t==='STARTER', isBu = t==='BACKUP';
+
+    if (i===0) addDiv(list,'STARTERS',c.ac,`${c.ac}33`);
+    if (i===sc) addDiv(list,'BACKUPS','#94a3b8','#1e293b');
+    if (i===sc+3 && players.length>sc+3) addDiv(list,'DEVELOPMENT','#475569','#14141e');
+
+    const card = document.createElement('div');
+    card.className = 'pcard'; card.dataset.i = i;
+    card.style.cssText = `background:${isSt?`linear-gradient(135deg,${c.bg} 0%,${c.ac}11 100%)`:isBu?'#131320':'#0f0f1a'};border:${isSt?`1px solid ${c.ac}44`:isBu?'1px solid #1e293b':'1px solid #14141e'};border-left:3px solid ${tcolor};`;
+
+    const rank = mk('div','prank',`${i+1}`); rank.style.cssText=`background:${isSt?c.ac:isBu?'#1e293b':'#14141e'};color:${isSt?'#0a0a0f':tcolor}`;
+    const nm = mk('div','pname',name); nm.style.cssText=`font-size:${isSt?17:15}px;color:${isSt?'#f1f5f9':isBu?'#cbd5e1':'#64748b'}`;
+    const tb = mk('div','ptier',t); tb.style.color=tcolor;
+    const pb = mk('button','pbtn','⇄ POS');
+    pb.addEventListener('mouseenter',()=>{pb.style.borderColor=c.ac;pb.style.color=c.ac;});
+    pb.addEventListener('mouseleave',()=>{pb.style.borderColor='#1e293b';pb.style.color='#475569';});
+    pb.addEventListener('mousedown',e=>e.stopPropagation());
+    pb.addEventListener('click',e=>{e.stopPropagation();openModal(name,active);});
+    const ph = mk('div','phandle','⠿');
+
+    card.append(rank,nm,tb,pb,ph);
+    card.addEventListener('mousedown', e => {
+      if(e.button!==0||e.target===pb||pb.contains(e.target)) return;
+      e.preventDefault(); startDrag(e,'pl',i,card);
+    });
+    list.appendChild(card);
+  });
+}
+
+function addDiv(parent, label, color, lc) {
+  const d = document.createElement('div'); d.className='sec-div';
+  if(parent.children.length>0) d.style.marginTop='10px';
+  d.innerHTML=`<div class="sec-div-lbl" style="color:${color}">${label}</div><div class="sec-div-line" style="background:${lc}"></div>`;
+  parent.appendChild(d);
+}
+function mk(tag, cls, txt) { const el=document.createElement(tag); el.className=cls; el.textContent=txt; return el; }
+
+// ── Drag (mouse events) ───────────────────────────────────────
+function startDrag(e, type, fromIdx, el) {
+  const rect = el.getBoundingClientRect();
+  ds = { type, fromIdx, toIdx: fromIdx, el, ox: e.clientX-rect.left, oy: e.clientY-rect.top, live: false, sx: e.clientX, sy: e.clientY };
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+}
+
+function onMove(e) {
+  if (!ds) return;
+  if (!ds.live) {
+    if (Math.abs(e.clientX-ds.sx)<5 && Math.abs(e.clientY-ds.sy)<5) return;
+    ds.live = true;
+    ds.el.classList.add('ghost');
+    activateClone(ds.el, e);
+  }
+  const clone = document.getElementById('drag-clone');
+  clone.style.left = (e.clientX - ds.ox) + 'px';
+  clone.style.top  = (e.clientY - ds.oy) + 'px';
+
+  // hit-test
+  clone.style.display = 'none';
+  const hit = document.elementFromPoint(e.clientX, e.clientY);
+  clone.style.display = 'flex';
+  clearMarkers();
+
+  if (ds.type === 'pl') {
+    const card = hit && hit.closest('.pcard');
+    if (card && card !== ds.el) {
+      const idx = parseInt(card.dataset.i);
+      const mid = card.getBoundingClientRect().top + card.getBoundingClientRect().height/2;
+      const above = e.clientY < mid;
+      card.classList.add(above ? 'drop-hi' : 'drop-lo');
+      ds.toIdx = above ? idx : idx;
+    }
+  } else {
+    const btn = hit && hit.closest('.pos-btn');
+    if (btn && btn !== ds.el) {
+      const idx = parseInt(btn.dataset.i);
+      const mid = btn.getBoundingClientRect().top + btn.getBoundingClientRect().height/2;
+      btn.classList.add(e.clientY < mid ? 'drop-hi' : 'drop-lo');
+      ds.toIdx = idx;
+    }
+  }
+}
+
+function onUp(e) {
+  document.removeEventListener('mousemove', onMove);
+  document.removeEventListener('mouseup', onUp);
+  const clone = document.getElementById('drag-clone');
+  clone.style.display = 'none';
+  clearMarkers();
+  if (!ds) return;
+  ds.el.classList.remove('ghost');
+
+  if (ds.live) {
+    // final target
+    clone.style.display='none';
+    const hit = document.elementFromPoint(e.clientX, e.clientY);
+
+    if (ds.type === 'pl') {
+      const card = hit && hit.closest('.pcard');
+      let fi = ds.fromIdx;
+      if (card) {
+        const idx = parseInt(card.dataset.i);
+        const mid = card.getBoundingClientRect().top + card.getBoundingClientRect().height/2;
+        fi = e.clientY < mid ? idx : idx + 0; // insert at idx
+        // refine: drop below = insert after
+        fi = idx;
+        if (e.clientY >= mid && idx > ds.fromIdx) fi = idx;
+        if (e.clientY < mid && idx < ds.fromIdx) fi = idx;
+        if (e.clientY >= mid && idx < ds.fromIdx) fi = idx + 1 <= pos[active].length-1 ? idx+1 : idx;
+        if (e.clientY < mid && idx > ds.fromIdx) fi = idx - 1 >= 0 ? idx-1 : idx;
+      }
+      if (fi !== ds.fromIdx) {
+        const arr = [...pos[active]];
+        const [mv] = arr.splice(ds.fromIdx, 1);
+        arr.splice(fi, 0, mv);
+        pos[active] = arr;
+      }
+    } else {
+      const btn = hit && hit.closest('.pos-btn');
+      let fi = ds.toIdx;
+      if (btn) fi = parseInt(btn.dataset.i);
+      if (fi !== ds.fromIdx) {
+        const arr = [...order];
+        const [mv] = arr.splice(ds.fromIdx, 1);
+        arr.splice(fi, 0, mv);
+        order = arr;
+      }
+    }
+  }
+
+  ds = null;
+  render();
+}
+
+function activateClone(el, e) {
+  const clone = document.getElementById('drag-clone');
+  const rect = el.getBoundingClientRect();
+  clone.style.cssText = `position:fixed;pointer-events:none;z-index:9999;width:${rect.width}px;display:flex;align-items:center;gap:12px;border-radius:8px;padding:10px 14px;box-shadow:0 16px 48px rgba(0,0,0,0.7);transform:rotate(1.5deg) scale(1.02);font-family:'Barlow Condensed',sans-serif;color:#e2e8f0;border-left-width:3px;border-left-style:solid;left:${e.clientX-ds.ox}px;top:${e.clientY-ds.oy}px;background:${el.style.background};border-color:${el.style.borderColor||'#1e293b'};border-left-color:${el.style.borderLeftColor||'#475569'};`;
+  clone.innerHTML = el.innerHTML;
+  clone.querySelectorAll('button').forEach(b => { const c=b.cloneNode(true); b.replaceWith(c); });
+}
+
+function clearMarkers() {
+  document.querySelectorAll('.drop-hi,.drop-lo').forEach(el=>el.classList.remove('drop-hi','drop-lo'));
+}
+
+// Prevent text selection during drag
+document.addEventListener('selectstart', e => { if (ds&&ds.live) e.preventDefault(); });
+
+// ── Modal ─────────────────────────────────────────────────────
+function openModal(playerName, fromPos) {
+  const c = C[fromPos];
+  document.getElementById('modal-name').textContent = playerName;
+  document.getElementById('modal-current').innerHTML = `Currently: <span style="color:${c.ac}">${fromPos}</span> <span style="color:#334155">→ Select new position</span>`;
+  const cont = document.getElementById('modal-positions');
+  cont.innerHTML = '';
+  order.filter(p=>p!==fromPos).forEach(p => {
+    const pc = C[p];
+    const btn = document.createElement('button');
+    btn.className = 'mpos-btn';
+    btn.style.borderLeftColor = pc.ac;
+    btn.style.borderColor = `${pc.ac}22`;
+    btn.innerHTML = `<span style="font-size:15px;font-weight:700">${p}</span><span style="font-size:11px;color:#475569">${pos[p].length} players</span>`;
+    btn.addEventListener('mouseenter',()=>{btn.style.background=pc.bg;btn.style.color=pc.ac;});
+    btn.addEventListener('mouseleave',()=>{btn.style.background='#131320';btn.style.color='#cbd5e1';});
+    btn.addEventListener('click',()=>{ pos[fromPos]=pos[fromPos].filter(n=>n!==playerName); pos[p]=[...pos[p],playerName]; closeModal(); render(); });
+    cont.appendChild(btn);
+  });
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+document.getElementById('modal-overlay').addEventListener('click', closeModal);
+
+render();
+</script>
+
+</body>
+</html>
